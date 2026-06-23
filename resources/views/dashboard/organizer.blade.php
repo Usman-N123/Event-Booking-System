@@ -21,7 +21,7 @@
     <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
       <div class="p-5">
         <dt class="text-sm font-medium text-gray-500 truncate">Total Revenue Earned</dt>
-        <dd class="mt-1 text-3xl font-semibold text-gray-900">${{ number_format($organizerStats['total_revenue'], 2) }}</dd>
+        <dd class="mt-1 text-3xl font-semibold text-gray-900">Rs.{{ number_format($organizerStats['total_revenue'], 2) }}</dd>
       </div>
     </div>
   </div>

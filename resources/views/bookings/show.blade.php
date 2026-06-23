@@ -55,7 +55,7 @@
                         </div>
                         <div>
                             <p class="text-sm text-gray-500 font-medium mb-1">Total Paid</p>
-                            <p class="text-base font-semibold text-indigo-600">${{ number_format($booking->total_amount, 2) }}</p>
+                            <p class="text-base font-semibold text-indigo-600">Rs.{{ number_format($booking->total_amount, 2) }}</p>
                         </div>
                     </div>
                 </div>

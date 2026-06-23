@@ -39,7 +39,7 @@
                     
                     <div class="flex justify-between items-center mb-6">
                         <span class="text-gray-500">Price per ticket</span>
-                        <span class="text-2xl font-extrabold text-indigo-600">${{ number_format($event->price, 2) }}</span>
+                        <span class="text-2xl font-extrabold text-indigo-600">Rs.{{ number_format($event->price, 2) }}</span>
                     </div>
 
                     <div class="flex justify-between items-center mb-6 text-sm">

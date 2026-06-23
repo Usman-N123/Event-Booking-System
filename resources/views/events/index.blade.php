@@ -67,7 +67,7 @@
                         <div class="p-4 flex-grow flex flex-col">
                             <h4 class="text-lg font-bold text-gray-900 mb-1">{{ $event->title }}</h4>
                             <p class="text-sm text-gray-500 mb-2">{{ $event->city }} &bull; {{ $event->start_date->format('M d, Y') }}</p>
-                            <p class="text-xl font-semibold text-indigo-600 mb-4 {{ $event->available_seats <= 0 ? 'grayscale' : '' }}">${{ number_format($event->price, 2) }}</p>
+                            <p class="text-xl font-semibold text-indigo-600 mb-4 {{ $event->available_seats <= 0 ? 'grayscale' : '' }}">Rs.{{ number_format($event->price, 2) }}</p>
                             
                             <div class="mt-auto">
                                 <a href="{{ route('events.show', $event->id) }}" class="block w-full text-center bg-gray-50 text-indigo-700 hover:bg-gray-100 border border-gray-200 py-2 rounded-md text-sm font-medium transition-colors">

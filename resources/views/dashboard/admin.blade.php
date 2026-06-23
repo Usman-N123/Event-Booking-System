@@ -15,7 +15,7 @@
         <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
             <div class="p-5">
                 <dt class="text-sm font-medium text-gray-500 truncate">Total Global Revenue</dt>
-                <dd class="mt-1 text-3xl font-semibold text-gray-900">${{ number_format($globalStats['total_revenue'], 2) }}</dd>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900">Rs.{{ number_format($globalStats['total_revenue'], 2) }}</dd>
             </div>
         </div>
         <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
@@ -155,7 +155,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $booking->event->title }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $booking->event->start_date->format('M d, Y') }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $booking->quantity }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ number_format($booking->total_amount, 2) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rs.{{ number_format($booking->total_amount, 2) }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 font-mono">{{ $booking->booking_reference }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 @if($booking->status === \App\Enums\BookingStatus::CONFIRMED)

@@ -22,7 +22,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $booking->event->title }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $booking->event->start_date->format('M d, Y') }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $booking->quantity }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ number_format($booking->total_amount, 2) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rs.{{ number_format($booking->total_amount, 2) }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 font-mono">{{ $booking->booking_reference }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
                 @if($booking->status === \App\Enums\BookingStatus::CONFIRMED)
