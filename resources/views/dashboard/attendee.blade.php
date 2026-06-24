@@ -47,5 +47,10 @@
         </tbody>
       </table>
     </div>
+    @if($bookings->hasPages())
+      <div class="px-4 py-3 border-t border-gray-200">
+        {{ $bookings->links() }}
+      </div>
+    @endif
   </div>
 </x-app-layout>

@@ -26,7 +26,7 @@ class EventFilterDTO
             dateFrom: $request->validated('date_from'),
             dateTo: $request->validated('date_to'),
             sortPrice: $request->validated('sort_price'),
-            perPage: (int) $request->validated('per_page', 15),
+            perPage: (int) $request->validated('per_page', 9),
         );
     }
 

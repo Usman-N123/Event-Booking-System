@@ -63,7 +63,7 @@
                                 Sold Out
                             </div>
                         @endif
-                        <img src="{{ asset('storage/' . $event->banner_path) }}" alt="{{ $event->title }}" class="w-full h-48 object-cover {{ $event->available_seats <= 0 ? 'opacity-70 grayscale' : '' }}">
+                        <img src="{{ $event->banner_url }}" alt="{{ $event->title }}" class="w-full h-48 object-cover {{ $event->available_seats <= 0 ? 'opacity-70 grayscale' : '' }}">
                         <div class="p-4 flex-grow flex flex-col">
                             <h4 class="text-lg font-bold text-gray-900 mb-1">{{ $event->title }}</h4>
                             <p class="text-sm text-gray-500 mb-2">{{ $event->city }} &bull; {{ $event->start_date->format('M d, Y') }}</p>

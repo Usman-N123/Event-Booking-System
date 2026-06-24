@@ -7,7 +7,7 @@
         <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
             <!-- Header section with event banner -->
             <div class="relative h-48 md:h-64">
-                <img src="{{ asset('storage/' . $booking->event->banner_path) }}" alt="{{ $booking->event->title }}" class="w-full h-full object-cover">
+                <img src="{{ $booking->event->banner_url }}" alt="{{ $booking->event->title }}" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-80"></div>
                 <div class="absolute bottom-0 left-0 p-6">
                     <span class="px-2 py-1 bg-indigo-500 text-white text-xs font-bold rounded shadow-sm tracking-wide uppercase">{{ $booking->event->category }}</span>

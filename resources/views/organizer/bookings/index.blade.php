@@ -4,7 +4,7 @@
     <div class="mb-6 flex justify-between items-center">
         <div>
             <h2 class="text-2xl font-bold text-gray-900">Bookings for: {{ $event->title }}</h2>
-            <p class="mt-1 text-sm text-gray-500">Total Tickets Sold: {{ $bookings->sum('quantity') }}</p>
+            <p class="mt-1 text-sm text-gray-500">Total Tickets Sold: {{ $totalTicketsSold }}</p>
         </div>
         <a href="{{ route('organizer.dashboard') }}" class="text-indigo-600 hover:text-indigo-900 font-medium text-sm">
             &larr; Back to Dashboard
@@ -50,6 +50,11 @@
           </tbody>
         </table>
       </div>
+      @if($bookings->hasPages())
+        <div class="px-4 py-3 border-t border-gray-200">
+          {{ $bookings->links() }}
+        </div>
+      @endif
     </div>
     
   </div>

@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="w-full h-64 md:h-96 relative">
-            <img src="{{ asset('storage/' . $event->banner_path) }}" alt="{{ $event->title }}" class="w-full h-full object-cover {{ $event->available_seats <= 0 ? 'opacity-70 grayscale' : '' }}">
+            <img src="{{ $event->banner_url }}" alt="{{ $event->title }}" class="w-full h-full object-cover {{ $event->available_seats <= 0 ? 'opacity-70 grayscale' : '' }}">
             <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-60"></div>
             @if($event->available_seats <= 0)
                 <div class="absolute top-4 right-4 bg-red-600 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg z-10">

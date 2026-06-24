@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Enums\EventApprovalStatus;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
     /**
  * @property int $id
@@ -28,7 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'organizer_id',
@@ -70,5 +73,30 @@ class Event extends Model
     public function scopeUpcoming($query)
     {
         return $query->where('start_date', '>=', now());
+    }
+
+    /**
+     * Get the public-facing banner URL.
+     *
+     * Seeded events store full external URLs (e.g., picsum.photos).
+     * Organizer-uploaded events store a relative path in public storage.
+     * This accessor handles both cases transparently so every view can
+     * simply use `$event->banner_url` without any conditional logic.
+     */
+    protected function bannerUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $path = $this->banner_path;
+
+                // Already an absolute URL (http/https) — use as-is.
+                if (filter_var($path, FILTER_VALIDATE_URL)) {
+                    return $path;
+                }
+
+                // Relative path stored in public disk.
+                return Storage::disk('public')->url($path);
+            }
+        );
     }
 }

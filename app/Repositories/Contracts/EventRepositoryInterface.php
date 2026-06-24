@@ -4,7 +4,6 @@ namespace App\Repositories\Contracts;
 
 use App\Models\Event;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 use App\DTOs\Event\EventFilterDTO;
 
 interface EventRepositoryInterface
@@ -89,26 +88,29 @@ interface EventRepositoryInterface
   public function getPendingCount(): int;
 
   /**
-   * Get all events belonging to a specific organizer.
+   * Get all events belonging to a specific organizer, paginated.
    *
    * @param int $organizerId
-   * @return Collection
+   * @param int $perPage
+   * @return LengthAwarePaginator
    */
-  public function getOrganizerEvents(int $organizerId): Collection;
+  public function getOrganizerEvents(int $organizerId, int $perPage = 10): LengthAwarePaginator;
 
   /**
-   * Get all draft events pending admin approval, with organizer eager-loaded.
+   * Get all draft events pending admin approval, paginated.
    *
-   * @return Collection
+   * @param int $perPage
+   * @return LengthAwarePaginator
    */
-  public function getPendingEvents(): Collection;
+  public function getPendingEvents(int $perPage = 15): LengthAwarePaginator;
 
   /**
-   * Get all events with their organizer.
+   * Get all events with their organizer, paginated.
    *
-   * @return Collection
+   * @param int $perPage
+   * @return LengthAwarePaginator
    */
-  public function getAllEvents(): Collection;
+  public function getAllEvents(int $perPage = 15): LengthAwarePaginator;
 
   /**
    * Update an event record with the given data.

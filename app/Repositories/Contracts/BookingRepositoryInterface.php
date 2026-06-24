@@ -4,6 +4,7 @@ namespace App\Repositories\Contracts;
 
 use App\Models\Booking;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface BookingRepositoryInterface
 {
@@ -16,12 +17,13 @@ interface BookingRepositoryInterface
     public function create(array $data): Booking;
 
     /**
-     * Get all bookings for a specific attendee, with event relationship eager-loaded.
+     * Get all bookings for a specific attendee, paginated.
      *
      * @param int $userId
-     * @return Collection
+     * @param int $perPage
+     * @return LengthAwarePaginator
      */
-    public function getUserBookings(int $userId): Collection;
+    public function getUserBookings(int $userId, int $perPage = 10): LengthAwarePaginator;
 
     /**
      * Get the total number of bookings.
@@ -38,11 +40,12 @@ interface BookingRepositoryInterface
     public function getTotalRevenue(): float;
 
     /**
-     * Get all bookings.
+     * Get all bookings, paginated.
      *
-     * @return Collection
+     * @param int $perPage
+     * @return LengthAwarePaginator
      */
-    public function getAllBookings(): Collection;
+    public function getAllBookings(int $perPage = 15): LengthAwarePaginator;
 
     /**
      * Get aggregated stats (total bookings, total revenue) for an organizer's events.

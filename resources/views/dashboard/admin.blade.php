@@ -87,6 +87,11 @@
                 </tbody>
             </table>
         </div>
+        @if($pendingEvents->hasPages())
+            <div class="px-4 py-3 border-t border-gray-200">
+                {{ $pendingEvents->links() }}
+            </div>
+        @endif
     </div>
 
     <div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden mt-8">
@@ -129,6 +134,11 @@
                 </tbody>
             </table>
         </div>
+        @if($allEvents->hasPages())
+            <div class="px-4 py-3 border-t border-gray-200">
+                {{ $allEvents->links() }}
+            </div>
+        @endif
     </div>
 
     <div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden mt-8">
@@ -177,5 +187,10 @@
                 </tbody>
             </table>
         </div>
+        @if($bookings->hasPages())
+            <div class="px-4 py-3 border-t border-gray-200">
+                {{ $bookings->links() }}
+            </div>
+        @endif
     </div>
 </x-app-layout>

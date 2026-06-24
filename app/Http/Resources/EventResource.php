@@ -27,7 +27,7 @@ class EventResource extends JsonResource {
       'total_seats' => $this->total_seats,
       'available_seats' => $this->available_seats,
       'approval_status' => $this->approval_status->value,
-      'banner_url' => asset('storage/' . $this->banner_path),
+      'banner_url' => $this->banner_url,
     ];
   }
 }

@@ -124,8 +124,9 @@ class EventController extends Controller
 
   public function bookings(Event $event): View
   {
-    $bookings = $event->bookings()->with('attendee')->latest()->get();
-    return view('organizer.bookings.index', compact('event', 'bookings'));
+    $bookings = $event->bookings()->with('attendee')->latest()->paginate(15);
+    $totalTicketsSold = $event->bookings()->sum('quantity');
+    return view('organizer.bookings.index', compact('event', 'bookings', 'totalTicketsSold'));
   }
 
 }

@@ -6,9 +6,11 @@ namespace App\Models;
 use App\Enums\UserRole;
 use Laravel\Sanctum\HasApiTokens;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -50,5 +52,32 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => UserRole::class,
         ];
+    }
+
+    /**
+     * Get the public-facing profile picture URL.
+     *
+     * Seeded users have a full pravatar.cc URL; real users have a relative
+     * storage path. Returns null gracefully when no picture is set.
+     */
+    protected function profilePictureUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $path = $this->profile_picture_path;
+
+                if (!$path) {
+                    return null;
+                }
+
+                // Already an absolute URL — return it directly.
+                if (filter_var($path, FILTER_VALIDATE_URL)) {
+                    return $path;
+                }
+
+                // Relative path stored in public disk.
+                return Storage::disk('public')->url($path);
+            }
+        );
     }
 }

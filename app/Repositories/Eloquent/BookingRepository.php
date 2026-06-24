@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Enums\BookingStatus;
 use App\Repositories\Contracts\BookingRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class BookingRepository implements BookingRepositoryInterface
 {
@@ -21,17 +22,18 @@ class BookingRepository implements BookingRepositoryInterface
   }
 
   /**
-   * Get all bookings for a specific attendee, with event relationship eager-loaded.
+   * Get all bookings for a specific attendee, paginated.
    *
    * @param int $userId
-   * @return Collection
+   * @param int $perPage
+   * @return LengthAwarePaginator
    */
-  public function getUserBookings(int $userId): Collection
+  public function getUserBookings(int $userId, int $perPage = 10): LengthAwarePaginator
   {
     return Booking::with('event')
       ->where('attendee_id', $userId)
       ->latest()
-      ->get();
+      ->paginate($perPage);
   }
 
   /**
@@ -55,13 +57,14 @@ class BookingRepository implements BookingRepositoryInterface
   }
 
   /**
-   * Get all bookings.
+   * Get all bookings, paginated.
    *
-   * @return Collection
+   * @param int $perPage
+   * @return LengthAwarePaginator
    */
-  public function getAllBookings(): Collection
+  public function getAllBookings(int $perPage = 15): LengthAwarePaginator
   {
-    return Booking::with(['event', 'attendee'])->latest()->get();
+    return Booking::with(['event', 'attendee'])->latest()->paginate($perPage);
   }
 
   /**

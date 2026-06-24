@@ -180,39 +180,42 @@ class EventRepository implements EventRepositoryInterface
     }
 
     /**
-     * Get all events belonging to a specific organizer.
+     * Get all events belonging to a specific organizer, paginated.
      *
      * @param int $organizerId
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param int $perPage
+     * @return LengthAwarePaginator
      */
-    public function getOrganizerEvents(int $organizerId): \Illuminate\Database\Eloquent\Collection
+    public function getOrganizerEvents(int $organizerId, int $perPage = 10): LengthAwarePaginator
     {
         return Event::where('organizer_id', $organizerId)
             ->latest()
-            ->get();
+            ->paginate($perPage);
     }
 
     /**
-     * Get all draft events pending admin approval, with organizer eager-loaded.
+     * Get all draft events pending admin approval, paginated.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param int $perPage
+     * @return LengthAwarePaginator
      */
-    public function getPendingEvents(): \Illuminate\Database\Eloquent\Collection
+    public function getPendingEvents(int $perPage = 15): LengthAwarePaginator
     {
         return Event::with('organizer')
             ->where('approval_status', EventApprovalStatus::DRAFT->value)
             ->latest()
-            ->get();
+            ->paginate($perPage);
     }
 
     /**
-     * Get all events with their organizer.
+     * Get all events with their organizer, paginated.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param int $perPage
+     * @return LengthAwarePaginator
      */
-    public function getAllEvents(): \Illuminate\Database\Eloquent\Collection
+    public function getAllEvents(int $perPage = 15): LengthAwarePaginator
     {
-        return Event::with('organizer')->latest()->get();
+        return Event::with('organizer')->latest()->paginate($perPage);
     }
 
     /**
