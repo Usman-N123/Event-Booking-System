@@ -34,6 +34,18 @@
             </div>
 
             <div class="md:col-span-1">
+                @auth
+                    @if(auth()->id() === $event->organizer_id)
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 mb-6">
+                            <h3 class="text-lg font-bold text-indigo-900 mb-2">Organizer Dashboard</h3>
+                            <p class="text-sm text-indigo-700 mb-4">You are the organizer of this event.</p>
+                            <a href="{{ route('events.bookings', $event->id) }}" class="block w-full text-center bg-indigo-600 text-white hover:bg-indigo-700 py-2 rounded-md text-sm font-bold transition-colors shadow-sm">
+                                View All Bookings
+                            </a>
+                        </div>
+                    @endif
+                @endauth
+
                 <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 sticky top-6">
                     <h3 class="text-lg font-bold text-gray-900 border-b border-gray-200 pb-4 mb-4">Secure Your Spot</h3>
                     

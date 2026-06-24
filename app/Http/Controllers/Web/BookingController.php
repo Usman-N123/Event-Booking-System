@@ -38,10 +38,6 @@ class BookingController extends Controller
 
     public function show(Booking $booking): View
     {
-        if ($booking->attendee_id !== auth()->id()) {
-            abort(403, 'You do not own this booking.');
-        }
-
         return view('bookings.show', compact('booking'));
     }
 }

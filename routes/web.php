@@ -14,14 +14,20 @@ Route::get('/events/{event}', [EventController::class, 'show'])->name('events.sh
 Route::middleware(['auth'])->group(function () {
 
   Route::get('/attendee/dashboard', [DashboardController::class, 'attendee'])->name('attendee.dashboard');
-  Route::get('/attendee/bookings/{booking}', [BookingController::class, 'show'])->name('attendee.bookings.show');
   Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+    // The universal booking show route protected by our new Policy
+  Route::get('/bookings/{booking}', [BookingController::class, 'show'])
+      ->name('attendee.bookings.show') // Keeping this name so we don't break existing views
+      ->middleware('can:view,booking'); 
 
   Route::middleware(['role:organizer'])->group(function () {
     Route::get('/organizer/dashboard', [DashboardController::class, 'organizer'])->name('organizer.dashboard');
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
     Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
     Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
+    Route::get('/events/{event}/bookings', [EventController::class, 'bookings'])
+        ->name('events.bookings')
+        ->middleware('can:view,event'); // Uses your EventPolicy@view
   });
 
   Route::middleware(['role:admin'])->group(function () {

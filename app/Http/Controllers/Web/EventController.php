@@ -121,4 +121,11 @@ class EventController extends Controller
         ->with('error', 'An error occurred while updating the event.');
     }
   }
+
+  public function bookings(Event $event): View
+  {
+    $bookings = $event->bookings()->with('attendee')->latest()->get();
+    return view('organizer.bookings.index', compact('event', 'bookings'));
+  }
+
 }

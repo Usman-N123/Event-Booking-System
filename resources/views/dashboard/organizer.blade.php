@@ -136,6 +136,7 @@
                     </span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <a href="{{ route('events.bookings', $event->id) }}" class="text-green-600 hover:text-green-900 mr-3">View Bookings</a>
                     <a href="{{ route('events.edit', $event->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
                   </td>
                 </tr>
