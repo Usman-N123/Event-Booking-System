@@ -8,6 +8,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasApiTokens, Notifiable;
+    use HasFactory, HasApiTokens, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +28,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_approved',
         'profile_picture_path',
     ];
 
@@ -49,9 +51,18 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => UserRole::class,
+            'password'          => 'hashed',
+            'role'              => UserRole::class,
+            'is_approved'       => 'boolean',
         ];
+    }
+
+    /**
+     * Determine whether this user (Organizer) has been approved by an Admin.
+     */
+    public function isApproved(): bool
+    {
+        return (bool) $this->is_approved;
     }
 
     /**

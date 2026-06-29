@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreBookingRequest;
-use App\DTOs\Booking\BookingCreateDTO;
-use App\Features\Booking\ProcessTicketBookingFeature;
+use App\Http\Requests\ManageBookingRequest;
+use App\DTOs\Booking\ManageBookingDTO;
+use App\Features\Booking\ManageBookingFeature;
 use App\Models\Booking;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -15,15 +15,15 @@ use Exception;
 class BookingController extends Controller
 {
     public function __construct(
-        protected ProcessTicketBookingFeature $processTicketBookingFeature
+        protected ManageBookingFeature $manageBookingFeature
     ) {}
 
-    public function store(StoreBookingRequest $request): RedirectResponse
+    public function store(ManageBookingRequest $request): RedirectResponse
     {
         try {
-            $dto = BookingCreateDTO::fromRequest($request);
+            $dto = ManageBookingDTO::fromRequest($request);
 
-            $this->processTicketBookingFeature->handle($dto);
+            $this->manageBookingFeature->handle($dto);
 
             return redirect()->route('attendee.dashboard')
                 ->with('success', 'Tickets booked successfully.');

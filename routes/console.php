@@ -4,7 +4,7 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('event:cleanup-drafts')->dailyAt('00:00');
+Schedule::command('event:cleanup-drafts')->yearly('00:00');
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

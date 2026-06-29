@@ -33,13 +33,7 @@ interface EventRepositoryInterface
    */
   public function findById(int $id): ?Event;
 
-  /**
-   * Create a new event record.
-   *
-   * @param array $data
-   * @return Event
-   */
-  public function create(array $data): Event;
+  public function manage(\App\DTOs\Event\ManageEventDTO $dto): Event;
 
   /**
    * Get a paginated, filtered, and cached list of public events.
@@ -112,14 +106,7 @@ interface EventRepositoryInterface
    */
   public function getAllEvents(int $perPage = 15): LengthAwarePaginator;
 
-  /**
-   * Update an event record with the given data.
-   *
-   * @param int $id
-   * @param array $data
-   * @return Event
-   */
-  public function update(int $id, array $data): Event;
+
 
   /**
    * Soft-delete (cancel) an event by its ID.
@@ -128,4 +115,14 @@ interface EventRepositoryInterface
    * @return bool
    */
   public function softDelete(int $id): bool;
+
+  /**
+   * Soft-delete an event, but ONLY if it belongs to the given organizer.
+   * Returns false (without deleting) if the event is owned by someone else.
+   *
+   * @param int $eventId
+   * @param int $organizerId
+   * @return bool
+   */
+  public function softDeleteByOrganizer(int $eventId, int $organizerId): bool;
 }

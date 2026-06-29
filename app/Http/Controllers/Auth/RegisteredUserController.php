@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\UserCreateRequest;
+use App\Http\Requests\User\ManageUserRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
-use App\DTOs\Auth\UserCreateDTO;
-use App\Features\Auth\RegisterUserFeature;
+use App\DTOs\User\ManageUserDTO;
+use App\Features\User\ManageUserFeature;
 
 class RegisteredUserController extends Controller
 {
   public function __construct(
-    protected RegisterUserFeature $registerUserFeature
+    protected ManageUserFeature $manageUserFeature
   ) {}
 
   public function create(): View
@@ -21,11 +21,11 @@ class RegisteredUserController extends Controller
     return view('auth.register');
   }
 
-  public function store(UserCreateRequest $request): RedirectResponse
+  public function store(ManageUserRequest $request): RedirectResponse
   {
-    $dto = UserCreateDTO::fromRequest($request);
+    $dto = ManageUserDTO::fromRequest($request);
     
-    $user = $this->registerUserFeature->handle($dto);
+    $user = $this->manageUserFeature->handle($dto);
 
     Auth::login($user);
 

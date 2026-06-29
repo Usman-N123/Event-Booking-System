@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreEventRequest;
-use App\DTOs\Event\EventCreateDTO;
-use App\Features\Event\CreateEventFeature;
+use App\Http\Requests\ManageEventRequest;
+use App\DTOs\Event\ManageEventDTO;
+use App\Features\Event\ManageEventFeature;
 use App\Http\Resources\EventResource;
 use App\Http\Requests\IndexEventRequest;
 use App\DTOs\Event\EventFilterDTO;
@@ -17,25 +17,16 @@ use Exception;
 class EventController extends Controller {
   
   public function __construct(
-    protected CreateEventFeature $createEventFeature,
+    protected ManageEventFeature $manageEventFeature,
 	protected EventRepositoryInterface $eventRepository
   ) {}
 
-  /**
-   * Store a newly created event.
-   *
-   * @param StoreEventRequest $request
-   * @return JsonResponse
-   */
-  public function store(StoreEventRequest $request): JsonResponse {
+  public function store(ManageEventRequest $request): JsonResponse {
     try {
-      // 1. Map validated request to DTO
-      $dto = EventCreateDTO::fromRequest($request);
+      $dto = ManageEventDTO::fromRequest($request);
 
-      // 2. Execute Business Logic
-      $event = $this->createEventFeature->handle($dto);
+      $event = $this->manageEventFeature->handle($dto);
 
-      // 3. Return Strictly Formatted Success Response
       return response()->json([
         'status' => true,
         'message' => 'Event created successfully and is pending admin approval.',

@@ -1,16 +1,23 @@
 <x-app-layout>
 
-  @if(session('success'))
-    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-md">
-      <p class="text-sm text-green-700">{{ session('success') }}</p>
-    </div>
-  @endif
-  @if(session('error'))
-    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-      <p class="text-sm text-red-700">{{ session('error') }}</p>
+  {{-- Pending Approval Banner --}}
+  @if(! auth()->user()->isApproved())
+    <div class="mb-6 flex items-start gap-4 rounded-lg border border-amber-300 bg-amber-50 p-4 shadow-sm">
+      <div class="flex-shrink-0 text-amber-500 mt-0.5">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+        </svg>
+      </div>
+      <div class="flex-1">
+        <h3 class="text-sm font-semibold text-amber-800">Account Pending Admin Approval</h3>
+        <p class="mt-1 text-sm text-amber-700">
+          Your organizer account is under review. An Admin must approve your account before you can create or publish events.
+        </p>
+      </div>
     </div>
   @endif
 
+  {{-- Stats Cards --}}
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
     <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
       <div class="p-5">
@@ -27,9 +34,13 @@
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    {{-- Create Event Form --}}
     <div class="lg:col-span-1">
-      <div class="bg-white shadow-sm border border-gray-200 rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Create New Event</h3>
+      <div class="bg-white shadow-sm border border-gray-200 rounded-lg p-6 {{ ! auth()->user()->isApproved() ? 'opacity-60 pointer-events-none select-none' : '' }}">
+        <h3 class="text-lg font-medium text-gray-900 mb-1">Create New Event</h3>
+        @if(! auth()->user()->isApproved())
+          <p class="text-xs text-amber-600 mb-4">Locked until your account is approved.</p>
+        @endif
         <form action="{{ route('events.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
           @csrf
 
@@ -50,10 +61,10 @@
               <label class="block text-sm font-medium text-gray-700">Category</label>
               <select name="category" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 <option value="">Select...</option>
-                <option value="Concert" @selected(old('category') == 'Concert')>Concert</option>
-                <option value="Tech" @selected(old('category') == 'Tech')>Tech</option>
-                <option value="Workshop" @selected(old('category') == 'Workshop')>Workshop</option>
-                <option value="Webinar" @selected(old('category') == 'Webinar')>Webinar</option>
+                <option value="Concert"    @selected(old('category') == 'Concert')>Concert</option>
+                <option value="Tech"       @selected(old('category') == 'Tech')>Tech</option>
+                <option value="Workshop"   @selected(old('category') == 'Workshop')>Workshop</option>
+                <option value="Webinar"    @selected(old('category') == 'Webinar')>Webinar</option>
                 <option value="Conference" @selected(old('category') == 'Conference')>Conference</option>
               </select>
               @error('category') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
@@ -110,6 +121,7 @@
       </div>
     </div>
 
+    {{-- My Events Table --}}
     <div class="lg:col-span-2">
       <div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
         <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
@@ -135,9 +147,16 @@
                       {{ ucfirst($event->approval_status->value) }}
                     </span>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a href="{{ route('events.bookings', $event->id) }}" class="text-green-600 hover:text-green-900 mr-3">View Bookings</a>
-                    <a href="{{ route('events.edit', $event->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                    <a href="{{ route('events.bookings', $event->id) }}" class="text-green-600 hover:text-green-900">Bookings</a>
+                    <a href="{{ route('events.edit', $event->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                    <form action="{{ route('organizer.events.cancel', $event->id) }}" method="POST" class="inline"
+                          x-data
+                          @submit.prevent="if(confirm('Cancel this event? This cannot be undone.')) $el.submit()">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="text-red-600 hover:text-red-900">Cancel</button>
+                    </form>
                   </td>
                 </tr>
               @empty

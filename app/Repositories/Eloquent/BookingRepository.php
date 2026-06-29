@@ -10,16 +10,64 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class BookingRepository implements BookingRepositoryInterface
 {
-  /**
-   * Create a new booking record.
-   *
-   * @param array $data
-   * @return Booking
-   */
-  public function create(array $data): Booking
-  {
-    return Booking::create($data);
-  }
+    public function manage(\App\DTOs\Booking\ManageBookingDTO $dto): Booking
+    {
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($dto) {
+            if ($dto->id) {
+                $booking = Booking::find($dto->id);
+                if (!$booking) {
+                    throw new \Exception("Booking not found.", 404);
+                }
+                $event = \App\Models\Event::find($booking->event_id);
+                
+                if ($dto->quantity !== $booking->quantity) {
+                    $diff = $dto->quantity - $booking->quantity;
+                    if ($diff > 0 && $event->available_seats < $diff) {
+                        throw new \Exception("Not enough available seats.", 422);
+                    }
+                    $event->decrement('available_seats', $diff);
+                }
+            } else {
+                $booking = new Booking();
+                $booking->booking_reference = 'TKT-' . strtoupper(\Illuminate\Support\Str::random(8));
+                $booking->status = \App\Enums\BookingStatus::CONFIRMED->value;
+                $booking->attendee_id = $dto->attendeeId;
+                $booking->event_id = $dto->eventId;
+                
+                $event = \App\Models\Event::where('id', $dto->eventId)->lockForUpdate()->first();
+
+                if (!$event || $event->start_date < now() || $event->approval_status->value !== 'approved') {
+                    throw new \Exception("Event is not available for booking.", 422);
+                }
+
+                if ($event->available_seats < $dto->quantity) {
+                    throw new \Exception("Not enough available seats. Only {$event->available_seats} remaining.", 422);
+                }
+
+                $event->decrement('available_seats', $dto->quantity);
+            }
+
+            $booking->quantity = $dto->quantity;
+            $booking->total_amount = $event->price * $dto->quantity;
+
+            if ($dto->passPicture !== null) {
+                if ($booking->pass_picture_path) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($booking->pass_picture_path);
+                }
+                $booking->pass_picture_path = $dto->passPicture->store('bookings/pass_pictures', 'public');
+            } elseif (!$dto->id) {
+                $attendee = \App\Models\User::find($dto->attendeeId);
+                $booking->pass_picture_path = $attendee?->profile_picture_path;
+            }
+
+            $booking->save();
+
+            \App\DTOs\Event\EventFilterDTO::bustListingsCache();
+            \Illuminate\Support\Facades\Cache::forget(\App\Features\Dashboard\GetGlobalStatisticsFeature::CACHE_KEY);
+
+            return $booking;
+        });
+    }
 
   /**
    * Get all bookings for a specific attendee, paginated.
@@ -64,7 +112,7 @@ class BookingRepository implements BookingRepositoryInterface
    */
   public function getAllBookings(int $perPage = 15): LengthAwarePaginator
   {
-    return Booking::with(['event', 'attendee'])->latest()->paginate($perPage);
+    return Booking::with(['event', 'attendee'])->latest()->paginate($perPage, ['*'], 'bookings_page')->withQueryString();
   }
 
   /**

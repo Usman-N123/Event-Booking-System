@@ -6,8 +6,11 @@ use App\Models\Event;
 use App\Enums\EventApprovalStatus;
 use App\Repositories\Contracts\EventRepositoryInterface;
 use App\DTOs\Event\EventFilterDTO;
+use App\DTOs\Event\ManageEventDTO;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class EventRepository implements EventRepositoryInterface
 {
@@ -54,15 +57,55 @@ class EventRepository implements EventRepositoryInterface
         return Event::find($id);
     }
 
-    /**
-     * Create a new event record.
-     *
-     * @param array $data
-     * @return Event
-     */
-    public function create(array $data): Event
+    public function manage(ManageEventDTO $dto): Event
     {
-        return Event::create($data);
+        if ($dto->id) {
+            $event = $this->findById($dto->id);
+            if (! $event) {
+                throw new \Exception("Event not found.", 404);
+            }
+        } else {
+            $event = new Event();
+            $event->organizer_id = $dto->organizerId;
+            $event->slug = Str::slug($dto->title . '-' . time());
+            $event->approval_status = EventApprovalStatus::DRAFT->value;
+        }
+
+        $event->title = $dto->title;
+        $event->description = $dto->description;
+        $event->category = $dto->category;
+        $event->city = $dto->city;
+        $event->start_date = $dto->startDate;
+        $event->end_date = $dto->endDate;
+        $event->price = $dto->price;
+
+        if ($dto->totalSeats !== null) {
+            $event->total_seats = $dto->totalSeats;
+            if (! $dto->id) {
+                $event->available_seats = $dto->totalSeats;
+            }
+        }
+
+        if ($dto->banner !== null) {
+            if ($event->banner_path) {
+                Storage::disk('public')->delete($event->banner_path);
+            }
+            $event->banner_path = $dto->banner->store('events/banners', 'public');
+        }
+
+        if ($dto->nocDocument !== null) {
+            if ($event->noc_document_path) {
+                Storage::disk('local')->delete($event->noc_document_path);
+            }
+            $event->noc_document_path = $dto->nocDocument->store('events/noc_documents', 'local');
+        }
+
+        $event->save();
+
+        EventFilterDTO::bustListingsCache();
+        Cache::forget(\App\Features\Dashboard\GetGlobalStatisticsFeature::CACHE_KEY);
+
+        return $event;
     }
 
     /**
@@ -204,7 +247,7 @@ class EventRepository implements EventRepositoryInterface
         return Event::with('organizer')
             ->where('approval_status', EventApprovalStatus::DRAFT->value)
             ->latest()
-            ->paginate($perPage);
+            ->paginate($perPage, ['*'], 'pending_events_page')->withQueryString();
     }
 
     /**
@@ -215,22 +258,10 @@ class EventRepository implements EventRepositoryInterface
      */
     public function getAllEvents(int $perPage = 15): LengthAwarePaginator
     {
-        return Event::with('organizer')->latest()->paginate($perPage);
+        return Event::with('organizer')->latest()->paginate($perPage, ['*'], 'events_page')->withQueryString();
     }
 
-    /**
-     * Update an event record with the given data.
-     *
-     * @param int $id
-     * @param array $data
-     * @return Event
-     */
-    public function update(int $id, array $data): Event
-    {
-        $event = $this->findById($id);
-        $event->fill($data)->save();
-        return $event;
-    }
+
 
     /**
      * Soft-delete (cancel) an event by its ID.
@@ -243,4 +274,22 @@ class EventRepository implements EventRepositoryInterface
         $event = $this->findById($id);
         return (bool) $event?->delete();
     }
-}
+
+    /**
+     * Soft-delete an event owned by a specific organizer.
+     * Ownership is enforced at the query level — no organizer
+     * can delete another's event, even with a known ID.
+     *
+     * @param int $eventId
+     * @param int $organizerId
+     * @return bool
+     */
+    public function softDeleteByOrganizer(int $eventId, int $organizerId): bool
+    {
+        $event = Event::where('id', $eventId)
+            ->where('organizer_id', $organizerId)
+            ->first();
+
+        return (bool) $event?->delete();
+    }
+}

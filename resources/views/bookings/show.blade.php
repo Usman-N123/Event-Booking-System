@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-3xl mx-auto">
         <div class="mb-6">
-            <a href="{{ route('attendee.dashboard') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">&larr; Back to Dashboard</a>
+            <a href="{{ auth()->user()->role->value === 'organizer' ? route('organizer.dashboard') : route('attendee.dashboard') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">&larr; Back to Dashboard</a>
         </div>
 
         <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
@@ -63,22 +63,13 @@
                 <!-- Right column: Pass Picture & QR code placeholder -->
                 <div class="w-full md:w-48 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-gray-100 pt-6 md:pt-0 pl-0 md:pl-8">
                     <p class="text-sm text-gray-500 font-medium uppercase tracking-wider mb-3 text-center">Attendee Pass</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-full h-22 rounded-xl overflow-hidden shadow-inner bg-gray-50 border-2 border-gray-200 mb-4 flex items-center justify-center">
+                    <div class="flex flex-col items-center gap-4 w-full">
+                        <div class="w-32 h-32 rounded-xl overflow-hidden shadow-inner bg-gray-50 border-2 border-gray-200 flex items-center justify-center">
                             @if($booking->pass_picture_path)
-                                <img src="{{ asset('storage/' . $booking->pass_picture_path) }}" alt="Pass Photo" class="w-full h-full object-cover" style="width: 300px; height: 300px;">
+                                <img src="{{ Str::startsWith($booking->pass_picture_path, ['http://', 'https://']) ? $booking->pass_picture_path : asset('storage/' . $booking->pass_picture_path) }}" alt="Pass Photo" class="w-full h-full object-cover">
                             @else
                                 <svg class="w-12 h-12 text-gray-300" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                             @endif
-                        </div>
-                        <div class="w-full bg-gray-50 p-3 rounded text-center border border-dashed border-gray-300">
-                            <!-- Simulated QR Code placeholder -->
-                            <div class="w-24 h-24 mx-auto bg-white p-1 border border-gray-200 shadow-sm flex items-center justify-center" style="width: 300px; height: 300px;" >
-                                <svg class="w-full h-full text-gray-800" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h-2v2h2v-2zm-2 2h-2v2h2v-2zm2 2h-2v2h2v-2zm2-2h-2v2h2v-2zm-2-2h-2v2h2v-2zm-4 4h-2v2h2v-2zm2 2h-2v2h2v-2z"></path>
-                                </svg>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-2">Scan at entry</p>
                         </div>
                     </div>
                 </div>

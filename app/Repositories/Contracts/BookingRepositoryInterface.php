@@ -8,13 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface BookingRepositoryInterface
 {
-    /**
-     * Create a new booking record.
-     *
-     * @param array $data
-     * @return Booking
-     */
-    public function create(array $data): Booking;
+    public function manage(\App\DTOs\Booking\ManageBookingDTO $dto): Booking;
 
     /**
      * Get all bookings for a specific attendee, paginated.

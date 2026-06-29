@@ -2,11 +2,11 @@
 
 namespace App\DTOs\Event;
 
-use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\ManageEventRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 
-class EventCreateDTO
+class ManageEventDTO
 {
     public function __construct(
         public readonly int $organizerId,
@@ -17,18 +17,16 @@ class EventCreateDTO
         public readonly Carbon $startDate,
         public readonly Carbon $endDate,
         public readonly float $price,
-        public readonly int $totalSeats,
-        public readonly UploadedFile $banner,
-        public readonly UploadedFile $nocDocument,
+        public readonly ?int $id = null,
+        public readonly ?int $totalSeats = null,
+        public readonly ?UploadedFile $banner = null,
+        public readonly ?UploadedFile $nocDocument = null,
     ) {}
 
-    /**
-     * Factory method to create DTO from the Form Request.
-     */
-    public static function fromRequest(StoreEventRequest $request): self
+    public static function fromRequest(ManageEventRequest $request, ?int $eventId = null): self
     {
         return new self(
-            organizerId: auth()->id(), // Automatically assign the logged-in user
+            organizerId: auth()->id(),
             title: $request->validated('title'),
             description: $request->validated('description'),
             category: $request->validated('category'),
@@ -36,9 +34,10 @@ class EventCreateDTO
             startDate: Carbon::parse($request->validated('start_date')),
             endDate: Carbon::parse($request->validated('end_date')),
             price: (float) $request->validated('price'),
-            totalSeats: (int) $request->validated('total_seats'),
-            banner: $request->file('banner'),
-            nocDocument: $request->file('noc_document'),
+            id: $eventId,
+            totalSeats: $request->has('total_seats') ? (int) $request->validated('total_seats') : null,
+            banner: $request->hasFile('banner') ? $request->file('banner') : null,
+            nocDocument: $request->hasFile('noc_document') ? $request->file('noc_document') : null,
         );
     }
 }
