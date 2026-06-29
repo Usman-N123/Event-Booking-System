@@ -86,8 +86,8 @@ class User extends Authenticatable
                     return $path;
                 }
 
-                // Relative path stored in public disk.
-                return Storage::disk('public')->url($path);
+                // Use asset helper to generate a URL based on the current request host and port
+                return asset('storage/' . $path);
             }
         );
     }

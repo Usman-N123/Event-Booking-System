@@ -94,8 +94,9 @@ class Event extends Model
                     return $path;
                 }
 
-                // Relative path stored in public disk.
-                return Storage::disk('public')->url($path);
+                // Use asset helper to generate a URL based on the current request host and port
+                // rather than strictly relying on APP_URL which might be missing the port.
+                return asset('storage/' . $path);
             }
         );
     }
