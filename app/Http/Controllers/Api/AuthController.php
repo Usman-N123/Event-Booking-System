@@ -12,8 +12,8 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+          'email' => 'required|email',
+          'password' => 'required',
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -26,12 +26,12 @@ class AuthController extends Controller
         $token = $user->createToken('frontend-client')->plainTextToken;
 
         return response()->json([
-            'status' => true,
-            'token' => $token,
-            'user' => [
-                'name' => $user->name,
-                'role' => $user->role->value
-            ]
+          'status' => true,
+          'token' => $token,
+          'user' => [
+            'name' => $user->name,
+            'role' => $user->role->value
+          ]
         ], 200);
     }
 }

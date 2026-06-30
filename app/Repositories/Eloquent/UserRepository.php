@@ -6,10 +6,13 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
+use App\DTOs\User\ManageUserDTO;
+
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function manage(\App\DTOs\User\ManageUserDTO $dto): User
+    public function manage(ManageUserDTO $dto): User
     {
         if ($dto->id) {
             $user = $this->findById($dto->id);
@@ -18,7 +21,7 @@ class UserRepository implements UserRepositoryInterface
             }
         } else {
             $user = new User();
-            $user->is_approved = ($dto->role !== \App\Enums\UserRole::Organizer);
+            $user->is_approved = ($dto->role !== UserRole::Organizer);
         }
 
         $user->name = $dto->name;
@@ -31,7 +34,7 @@ class UserRepository implements UserRepositoryInterface
 
         if ($dto->profilePicture !== null) {
             if ($user->profile_picture_path) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_picture_path);
+                Storage::disk('public')->delete($user->profile_picture_path);
             }
             $user->profile_picture_path = $dto->profilePicture->store('users/profile_pictures', 'public');
         }
@@ -71,9 +74,9 @@ class UserRepository implements UserRepositoryInterface
     public function getPendingOrganizers(int $perPage = 15): LengthAwarePaginator
     {
         return User::where('role', UserRole::Organizer->value)
-            ->where('is_approved', false)
-            ->latest()
-            ->paginate($perPage, ['*'], 'organizers_page')->withQueryString();
+          ->where('is_approved', false)
+          ->latest()
+          ->paginate($perPage, ['*'], 'organizers_page')->withQueryString();
     }
 
     /**

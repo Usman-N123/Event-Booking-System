@@ -38,13 +38,13 @@ class UserFactory extends Factory
         $emailDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'company.com', 'techcorp.pk'];
 
         return [
-            'name'                 => $this->faker->name(),
-            'email'                => $this->faker->unique()->userName() . '@' . $this->faker->randomElement($emailDomains),
-            'email_verified_at'    => now(),
-            'password'             => static::$hashedPassword,
-            'role'                 => UserRole::Attendee,
-            'profile_picture_path' => 'https://i.pravatar.cc/300?u=' . $this->faker->unique()->uuid(),
-            'remember_token'       => Str::random(10),
+          'name'                 => $this->faker->name(),
+          'email'                => $this->faker->unique()->userName() . '@' . $this->faker->randomElement($emailDomains),
+          'email_verified_at'    => now(),
+          'password'             => static::$hashedPassword,
+          'role'                 => UserRole::Attendee,
+          'profile_picture_path' => 'https://i.pravatar.cc/300?u=' . $this->faker->unique()->uuid(),
+          'remember_token'       => Str::random(10),
         ];
     }
 
@@ -58,7 +58,7 @@ class UserFactory extends Factory
     public function admin(): static
     {
         return $this->state(fn (array $attributes) => [
-            'role' => UserRole::Admin,
+          'role' => UserRole::Admin,
         ]);
     }
 
@@ -68,7 +68,7 @@ class UserFactory extends Factory
     public function organizer(): static
     {
         return $this->state(fn (array $attributes) => [
-            'role' => UserRole::Organizer,
+          'role' => UserRole::Organizer,
         ]);
     }
 
@@ -78,7 +78,7 @@ class UserFactory extends Factory
     public function attendee(): static
     {
         return $this->state(fn (array $attributes) => [
-            'role' => UserRole::Attendee,
+          'role' => UserRole::Attendee,
         ]);
     }
 
@@ -88,7 +88,7 @@ class UserFactory extends Factory
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+          'email_verified_at' => null,
         ]);
     }
 }

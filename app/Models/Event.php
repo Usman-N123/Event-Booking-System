@@ -34,29 +34,29 @@ class Event extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'organizer_id',
-        'title',
-        'slug',
-        'description',
-        'category',
-        'city',
-        'start_date',
-        'end_date',
-        'price',
-        'total_seats',
-        'available_seats',
-        'banner_path',
-        'noc_document_path',
-        'approval_status'
+      'organizer_id',
+      'title',
+      'slug',
+      'description',
+      'category',
+      'city',
+      'start_date',
+      'end_date',
+      'price',
+      'total_seats',
+      'available_seats',
+      'banner_path',
+      'noc_document_path',
+      'approval_status'
     ];
 
     protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-        'price' => 'decimal:2',
-        'total_seats' => 'integer',
-        'available_seats' => 'integer',
-        'approval_status' => EventApprovalStatus::class,
+      'start_date' => 'datetime',
+      'end_date' => 'datetime',
+      'price' => 'decimal:2',
+      'total_seats' => 'integer',
+      'available_seats' => 'integer',
+      'approval_status' => EventApprovalStatus::class,
     ];
 
     public function organizer(): BelongsTo {

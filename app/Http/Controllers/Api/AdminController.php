@@ -34,9 +34,9 @@ class AdminController extends Controller
             );
 
             return response()->json([
-                'status' => true,
-                'message' => 'Event status updated successfully.',
-                'data' => new EventResource($event),
+              'status' => true,
+              'message' => 'Event status updated successfully.',
+              'data' => new EventResource($event),
             ], 200);
 
         } catch (Exception $e) {
@@ -44,9 +44,9 @@ class AdminController extends Controller
             Log::error('Event Status Update Failed: ' . $e->getMessage());
             
             return response()->json([
-                'status' => false,
-                'message' => 'An error occurred while updating the event status.',
-                'errors' => ['admin' => [$e->getMessage()]],
+              'status' => false,
+              'message' => 'An error occurred while updating the event status.',
+              'errors' => ['admin' => [$e->getMessage()]],
             ], $statusCode);
         }
     }
@@ -62,18 +62,18 @@ class AdminController extends Controller
             $stats = $this->getGlobalStatisticsFeature->handle();
 
             return response()->json([
-                'status' => true,
-                'message' => 'Global statistics retrieved successfully.',
-                'data' => $stats,
+              'status' => true,
+              'message' => 'Global statistics retrieved successfully.',
+              'data' => $stats,
             ], 200);
 
         } catch (Exception $e) {
             Log::error('Dashboard Stats Failed: ' . $e->getMessage());
             
             return response()->json([
-                'status' => false,
-                'message' => 'An error occurred while fetching statistics.',
-                'errors' => ['admin' => ['Internal Server Error']],
+              'status' => false,
+              'message' => 'An error occurred while fetching statistics.',
+              'errors' => ['admin' => ['Internal Server Error']],
             ], 500);
         }
     }

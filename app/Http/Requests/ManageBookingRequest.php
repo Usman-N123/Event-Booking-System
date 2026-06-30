@@ -27,7 +27,7 @@ class ManageBookingRequest extends FormRequest
         'integer',
         Rule::exists('events', 'id')->where(function ($query) {
             $query->where('start_date', '>=', now())
-                  ->where('approval_status', 'approved');
+              ->where('approval_status', 'approved');
         })
       ];
     }

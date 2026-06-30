@@ -7,6 +7,7 @@ use App\Enums\EventApprovalStatus;
 use App\Repositories\Contracts\EventRepositoryInterface;
 use App\DTOs\Event\EventFilterDTO;
 use App\DTOs\Event\ManageEventDTO;
+use App\Http\Controllers\Web\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -41,9 +42,9 @@ class EventRepository implements EventRepositoryInterface
     public function getActiveEventsPaginated(int $perPage = 15): LengthAwarePaginator
     {
         return Event::where('approval_status', EventApprovalStatus::APPROVED->value)
-            ->upcoming()
-            ->orderBy('start_date', 'asc')
-            ->paginate($perPage);
+          ->upcoming()
+          ->orderBy('start_date', 'asc')
+          ->paginate($perPage);
     }
 
     /**
@@ -122,8 +123,8 @@ class EventRepository implements EventRepositoryInterface
         return Cache::remember($cacheKey, $cacheDuration, function () use ($filters) {
             
             $query = Event::query()
-                ->where('approval_status', EventApprovalStatus::APPROVED->value)
-                ->upcoming(); // Only future events
+              ->where('approval_status', EventApprovalStatus::APPROVED->value)
+              ->upcoming(); // Only future events
 
             // 1. Search (Title or Description)
             if ($filters->search) {
@@ -186,8 +187,8 @@ class EventRepository implements EventRepositoryInterface
     public function deleteExpiredDrafts(): int
     {
         return Event::where('approval_status', EventApprovalStatus::DRAFT->value)
-            ->where('start_date', '<', now())
-            ->delete();
+          ->where('start_date', '<', now())
+          ->delete();
     }
 
     /**
@@ -232,8 +233,8 @@ class EventRepository implements EventRepositoryInterface
     public function getOrganizerEvents(int $organizerId, int $perPage = 10): LengthAwarePaginator
     {
         return Event::where('organizer_id', $organizerId)
-            ->latest()
-            ->paginate($perPage);
+          ->latest()
+          ->paginate($perPage);
     }
 
     /**
@@ -245,9 +246,9 @@ class EventRepository implements EventRepositoryInterface
     public function getPendingEvents(int $perPage = 15): LengthAwarePaginator
     {
         return Event::with('organizer')
-            ->where('approval_status', EventApprovalStatus::DRAFT->value)
-            ->latest()
-            ->paginate($perPage, ['*'], 'pending_events_page')->withQueryString();
+          ->where('approval_status', EventApprovalStatus::DRAFT->value)
+          ->latest()
+          ->paginate($perPage, ['*'], 'pending_events_page')->withQueryString();
     }
 
     /**
@@ -287,8 +288,8 @@ class EventRepository implements EventRepositoryInterface
     public function softDeleteByOrganizer(int $eventId, int $organizerId): bool
     {
         $event = Event::where('id', $eventId)
-            ->where('organizer_id', $organizerId)
-            ->first();
+          ->where('organizer_id', $organizerId)
+          ->first();
 
         return (bool) $event?->delete();
     }

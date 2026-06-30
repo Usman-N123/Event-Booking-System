@@ -13,13 +13,15 @@ use App\Repositories\Contracts\EventRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
+use App\Features\Event\OrganizerCancelEventFeature;
 use Exception;
 
 class EventController extends Controller
 {
   public function __construct(
     protected ManageEventFeature $manageEventFeature,
-    protected EventRepositoryInterface $eventRepository
+    protected EventRepositoryInterface $eventRepository,
+    protected OrganizerCancelEventFeature $organizerCancelEventFeature,
   ) {}
 
   public function index(IndexEventRequest $request): View|RedirectResponse
@@ -67,6 +69,13 @@ class EventController extends Controller
     return view('events.edit', compact('event'));
   }
 
+  /**
+   * Update an existing event.
+   *
+   * @param ManageEventRequest $request
+   * @param Event $event
+   * @return RedirectResponse
+   */
   public function update(ManageEventRequest $request, Event $event): RedirectResponse
   {
     if ($event->organizer_id !== auth()->id()) {
@@ -86,7 +95,13 @@ class EventController extends Controller
         ->with('error', 'An error occurred while updating the event.');
     }
   }
-
+  
+  /**
+   * Display bookings for a specific event.
+   *
+   * @param Event $event
+   * @return View
+   */
   public function bookings(Event $event): View
   {
     $bookings = $event->bookings()->with('attendee')->latest()->paginate(15);
@@ -94,4 +109,22 @@ class EventController extends Controller
     return view('organizer.bookings.index', compact('event', 'bookings', 'totalTicketsSold'));
   }
 
+  /**
+   * Soft-delete (cancel) an organizer's own event.
+   *
+   * @param Event $event
+   * @return RedirectResponse
+   */
+  public function cancel(Event $event,OrganizerCancelEventFeature $organizerCancelEventFeature): RedirectResponse
+  {
+    try {
+      $organizerCancelEventFeature->handle($event->id, auth()->id());
+
+      return redirect()->route('organizer.dashboard')->with('success', 'Your event has been cancelled successfully.');
+    } catch (Exception $e) {
+      Log::error('Organizer Event Cancellation Failed: ' . $e->getMessage());
+
+      return back()->with('error', 'Could not cancel the event. Please try again.');
+    }
+  }
 }

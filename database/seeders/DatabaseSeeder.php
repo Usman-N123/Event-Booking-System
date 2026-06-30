@@ -31,9 +31,9 @@ class DatabaseSeeder extends Seeder
         // 1. ADMIN (exactly 1)
         // ------------------------------------------------------------------ //
         User::factory()->admin()->create([
-            'name'     => 'Usman Ali (Admin)',
-            'email'    => 'admin@eventbooking.pk',
-            'password' => Hash::make('password123'),
+          'name'     => 'Usman Ali (Admin)',
+          'email'    => 'admin@eventbooking.pk',
+          'password' => Hash::make('password123'),
         ]);
 
         // ------------------------------------------------------------------ //
@@ -44,9 +44,9 @@ class DatabaseSeeder extends Seeder
         // One pinned organizer so we always have at least one with a known login.
         $organizers->push(
             User::factory()->organizer()->create([
-                'name'     => 'Zara Mirza (Organizer)',
-                'email'    => 'organizer@eventbooking.pk',
-                'password' => Hash::make('password123'),
+              'name'     => 'Zara Mirza (Organizer)',
+              'email'    => 'organizer@eventbooking.pk',
+              'password' => Hash::make('password123'),
             ])
         );
 
@@ -61,9 +61,9 @@ class DatabaseSeeder extends Seeder
 
         // One pinned attendee so we always have at least one with a known login.
         $pinnedAttendee = User::factory()->attendee()->create([
-            'name'     => 'Ali Hassan (Attendee)',
-            'email'    => 'attendee@eventbooking.pk',
-            'password' => Hash::make('password123'),
+          'name'     => 'Ali Hassan (Attendee)',
+          'email'    => 'attendee@eventbooking.pk',
+          'password' => Hash::make('password123'),
         ]);
 
         // 49 more randomly generated attendees.
@@ -75,28 +75,28 @@ class DatabaseSeeder extends Seeder
 
         // 18 APPROVED events — upcoming + past (bookable)
         $approvedUpcoming = Event::factory()
-            ->approved()
-            ->upcoming()
-            ->count(15)
-            ->create(['organizer_id' => fn () => $organizers->random()->id]);
+          ->approved()
+          ->upcoming()
+          ->count(15)
+          ->create(['organizer_id' => fn () => $organizers->random()->id]);
 
         $approvedPast = Event::factory()
-            ->approved()
-            ->past()
-            ->count(3)
-            ->create(['organizer_id' => fn () => $organizers->random()->id]);
+          ->approved()
+          ->past()
+          ->count(3)
+          ->create(['organizer_id' => fn () => $organizers->random()->id]);
 
         // 7 PENDING (draft) events — mix of dates
         Event::factory()
-            ->pending()
-            ->count(7)
-            ->create(['organizer_id' => fn () => $organizers->random()->id]);
+          ->pending()
+          ->count(7)
+          ->create(['organizer_id' => fn () => $organizers->random()->id]);
 
         // 5 REJECTED events
         Event::factory()
-            ->rejected()
-            ->count(5)
-            ->create(['organizer_id' => fn () => $organizers->random()->id]);
+          ->rejected()
+          ->count(5)
+          ->create(['organizer_id' => fn () => $organizers->random()->id]);
 
         // Only APPROVED events should receive bookings.
         $bookableEvents = $approvedUpcoming->merge($approvedPast);
@@ -133,11 +133,11 @@ class DatabaseSeeder extends Seeder
 
                 // --- Create the booking ---------------------------------------
                 Booking::factory()->create([
-                    'event_id'    => $event->id,
-                    'attendee_id' => $attendee->id,
-                    'quantity'    => $quantity,
-                    'total_amount'=> $totalAmount,
-                    'status'      => $status,
+                  'event_id'    => $event->id,
+                  'attendee_id' => $attendee->id,
+                  'quantity'    => $quantity,
+                  'total_amount'=> $totalAmount,
+                  'status'      => $status,
                 ]);
 
                 // --- Capacity integrity: only confirmed bookings deduct seats --
@@ -157,14 +157,14 @@ class DatabaseSeeder extends Seeder
         $this->command->table(
             ['Entity', 'Count'],
             [
-                ['Admin users',        User::where('role', UserRole::Admin->value)->count()],
-                ['Organizer users',    User::where('role', UserRole::Organizer->value)->count()],
-                ['Attendee users',     User::where('role', UserRole::Attendee->value)->count()],
-                ['Approved events',    Event::where('approval_status', 'approved')->count()],
-                ['Draft events',       Event::where('approval_status', 'draft')->count()],
-                ['Rejected events',    Event::where('approval_status', 'rejected')->count()],
-                ['Confirmed bookings', Booking::where('status', 'confirmed')->count()],
-                ['Cancelled bookings', Booking::where('status', 'cancelled')->count()],
+              ['Admin users',        User::where('role', UserRole::Admin->value)->count()],
+              ['Organizer users',    User::where('role', UserRole::Organizer->value)->count()],
+              ['Attendee users',     User::where('role', UserRole::Attendee->value)->count()],
+              ['Approved events',    Event::where('approval_status', 'approved')->count()],
+              ['Draft events',       Event::where('approval_status', 'draft')->count()],
+              ['Rejected events',    Event::where('approval_status', 'rejected')->count()],
+              ['Confirmed bookings', Booking::where('status', 'confirmed')->count()],
+              ['Cancelled bookings', Booking::where('status', 'cancelled')->count()],
             ]
         );
     }

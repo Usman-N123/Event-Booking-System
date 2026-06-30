@@ -31,7 +31,7 @@ class AdminUserController extends Controller
             $this->approveOrganizerFeature->handle($user->id);
 
             return redirect()->route('admin.dashboard')
-                ->with('success', "Organizer \"{$user->name}\" has been approved.");
+              ->with('success', "Organizer \"{$user->name}\" has been approved.");
         } catch (Exception $e) {
             Log::error('Organizer Approval Failed: ' . $e->getMessage());
             return back()->with('error', 'Could not approve the organizer.');
@@ -50,7 +50,7 @@ class AdminUserController extends Controller
             $this->rejectOrganizerFeature->handle($user->id);
 
             return redirect()->route('admin.dashboard')
-                ->with('success', "Organizer \"{$user->name}\" has been rejected.");
+              ->with('success', "Organizer \"{$user->name}\" has been rejected.");
         } catch (Exception $e) {
             Log::error('Organizer Rejection Failed: ' . $e->getMessage());
             return back()->with('error', 'Could not reject the organizer.');
@@ -69,7 +69,7 @@ class AdminUserController extends Controller
             $this->adminDeleteUserFeature->handle($user->id);
 
             return redirect()->route('admin.dashboard')
-                ->with('success', "User \"{$user->name}\" has been removed.");
+              ->with('success', "User \"{$user->name}\" has been removed.");
         } catch (Exception $e) {
             Log::error('Admin User Deletion Failed: ' . $e->getMessage());
             return back()->with('error', 'Could not delete the user.');

@@ -25,8 +25,8 @@ class EnsureOrganizerIsApproved
             ! $user->isApproved()
         ) {
             return redirect()
-                ->route('organizer.dashboard')
-                ->with('warning', 'Your organizer account is pending Admin approval. You cannot publish events yet.');
+              ->route('organizer.dashboard')
+              ->with('warning', 'Your organizer account is pending Admin approval. You cannot publish events yet.');
         }
 
         return $next($request);

@@ -23,13 +23,13 @@ class Booking extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'event_id', 'attendee_id', 'quantity', 'total_amount', 'booking_reference', 'status', 'pass_picture_path'
+      'event_id', 'attendee_id', 'quantity', 'total_amount', 'booking_reference', 'status', 'pass_picture_path'
     ];
 
     protected $casts = [
-        'total_amount' => 'decimal:2',
-        'quantity' => 'integer',
-        'status' => BookingStatus::class,
+      'total_amount' => 'decimal:2',
+      'quantity' => 'integer',
+      'status' => BookingStatus::class,
     ];
 
     public function event(): BelongsTo {

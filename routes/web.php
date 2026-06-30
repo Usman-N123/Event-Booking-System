@@ -7,7 +7,6 @@ use App\Http\Controllers\Web\BookingController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\AdminEventController;
 use App\Http\Controllers\Web\AdminUserController;
-use App\Http\Controllers\Web\OrganizerEventController;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('home');
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
@@ -17,32 +16,24 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/attendee/dashboard', [DashboardController::class, 'attendee'])->name('attendee.dashboard');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
-    Route::get('/bookings/{booking}', [BookingController::class, 'show'])
-        ->name('attendee.bookings.show')
-        ->middleware('can:view,booking');
+    Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('attendee.bookings.show')->middleware('can:view,booking');
 
     Route::middleware(['role:organizer'])->group(function () {
         Route::get('/organizer/dashboard', [DashboardController::class, 'organizer'])->name('organizer.dashboard');
 
-        // Event creation & update — blocked for unapproved organizers
         Route::middleware(['organizer.approved'])->group(function () {
             Route::post('/events', [EventController::class, 'store'])->name('events.store');
             Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
             Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
         });
 
-        // Organizers can cancel (soft-delete) their own events at any time
-        Route::delete('/organizer/events/{event}', [OrganizerEventController::class, 'cancel'])->name('organizer.events.cancel');
+        Route::delete('/organizer/events/{event}', [EventController::class, 'cancel'])->name('organizer.events.cancel');
 
-        Route::get('/events/{event}/bookings', [EventController::class, 'bookings'])
-            ->name('events.bookings')
-            ->middleware('can:view,event');
+        Route::get('/events/{event}/bookings', [EventController::class, 'bookings'])->name('events.bookings')->middleware('can:view,event');
     });
 
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'admin'])->name('admin.dashboard');
-
-        // Event management
         Route::patch('/admin/events/{event}/approve', [AdminEventController::class, 'approve'])->name('admin.events.approve');
         Route::delete('/admin/events/{event}/reject', [AdminEventController::class, 'reject'])->name('admin.events.reject');
         Route::delete('/admin/events/{event}/cancel', [AdminEventController::class, 'cancel'])->name('admin.events.cancel');

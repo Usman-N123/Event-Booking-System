@@ -26,13 +26,13 @@ class BookingController extends Controller
             $this->manageBookingFeature->handle($dto);
 
             return redirect()->route('attendee.dashboard')
-                ->with('success', 'Tickets booked successfully.');
+              ->with('success', 'Tickets booked successfully.');
 
         } catch (Exception $e) {
             Log::error('Booking Failed: ' . $e->getMessage());
             
             return back()->withInput()
-                ->with('error', 'An error occurred while processing the booking.');
+              ->with('error', 'An error occurred while processing the booking.');
         }
     }
 

@@ -18,7 +18,7 @@ class EventController extends Controller {
   
   public function __construct(
     protected ManageEventFeature $manageEventFeature,
-	protected EventRepositoryInterface $eventRepository
+    protected EventRepositoryInterface $eventRepository
   ) {}
 
   public function store(ManageEventRequest $request): JsonResponse {
@@ -58,17 +58,17 @@ class EventController extends Controller {
             $events = $this->eventRepository->getPublicEvents($dto);
 
             return response()->json([
-                'status' => true,
-                'message' => 'Events retrieved successfully.',
-                'data' => EventResource::collection($events)->response()->getData(true), // Preserves pagination metadata
+              'status' => true,
+              'message' => 'Events retrieved successfully.',
+              'data' => EventResource::collection($events)->response()->getData(true), // Preserves pagination metadata
             ], 200);
 
         } catch (Exception $e) {
             Log::error('Event Fetching Failed: ' . $e->getMessage());
             return response()->json([
-                'status' => false,
-                'message' => 'An error occurred while fetching events.',
-                'errors' => ['server' => ['Internal Server Error']],
+              'status' => false,
+              'message' => 'An error occurred while fetching events.',
+              'errors' => ['server' => ['Internal Server Error']],
             ], 500);
         }
     }

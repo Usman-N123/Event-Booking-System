@@ -35,13 +35,13 @@ class BookingFactory extends Factory
     public function definition(): array
     {
         return [
-            'event_id'         => Event::factory(),              // overridden in seeder
-            'attendee_id'      => User::factory()->attendee(),   // overridden in seeder
-            'quantity'         => 1,                             // overridden in seeder
-            'total_amount'     => 0.00,                          // overridden in seeder
-            'booking_reference'=> strtoupper('BK-' . Str::random(3) . '-' . $this->faker->unique()->numberBetween(10000, 99999)),
-            'status'           => BookingStatus::CONFIRMED,
-            'pass_picture_path'=> null,
+          'event_id'         => Event::factory(),              // overridden in seeder
+          'attendee_id'      => User::factory()->attendee(),   // overridden in seeder
+          'quantity'         => 1,                             // overridden in seeder
+          'total_amount'     => 0.00,                          // overridden in seeder
+          'booking_reference'=> strtoupper('BK-' . Str::random(3) . '-' . $this->faker->unique()->numberBetween(10000, 99999)),
+          'status'           => BookingStatus::CONFIRMED,
+          'pass_picture_path'=> null,
         ];
     }
 
@@ -55,7 +55,7 @@ class BookingFactory extends Factory
     public function confirmed(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => BookingStatus::CONFIRMED,
+          'status' => BookingStatus::CONFIRMED,
         ]);
     }
 
@@ -66,7 +66,7 @@ class BookingFactory extends Factory
     public function cancelled(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => BookingStatus::CANCELLED,
+          'status' => BookingStatus::CANCELLED,
         ]);
     }
 }

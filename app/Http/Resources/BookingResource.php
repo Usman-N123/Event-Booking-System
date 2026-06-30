@@ -16,13 +16,13 @@ class BookingResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => Crypt::encryptString((string) $this->id),
-            'event_id' => Crypt::encryptString((string) $this->event_id),
-            'quantity' => $this->quantity,
-            'total_amount' => $this->total_amount,
-            'booking_reference' => $this->booking_reference,
-            'status' => $this->status->value,
-            'booked_at' => $this->created_at->toIso8601String(),
+          'id' => Crypt::encryptString((string) $this->id),
+          'event_id' => Crypt::encryptString((string) $this->event_id),
+          'quantity' => $this->quantity,
+          'total_amount' => $this->total_amount,
+          'booking_reference' => $this->booking_reference,
+          'status' => $this->status->value,
+          'booked_at' => $this->created_at->toIso8601String(),
         ];
     }
 }

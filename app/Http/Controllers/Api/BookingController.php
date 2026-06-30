@@ -25,9 +25,9 @@ class BookingController extends Controller
             $booking = $this->manageBookingFeature->handle($dto);
 
             return response()->json([
-                'status' => true,
-                'message' => 'Tickets booked successfully.',
-                'data' => new BookingResource($booking),
+              'status' => true,
+              'message' => 'Tickets booked successfully.',
+              'data' => new BookingResource($booking),
             ], 201);
 
         } catch (Exception $e) {
@@ -37,9 +37,9 @@ class BookingController extends Controller
             Log::error('Booking Failed: ' . $e->getMessage());
             
             return response()->json([
-                'status' => false,
-                'message' => $message,
-                'errors' => ['booking' => [$message]],
+              'status' => false,
+              'message' => $message,
+              'errors' => ['booking' => [$message]],
             ], $statusCode);
         }
     }

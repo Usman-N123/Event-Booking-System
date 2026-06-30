@@ -16,13 +16,13 @@ class ManageEventRequest extends FormRequest
         $isUpdate = $this->isMethod('put') || $this->isMethod('patch');
 
         $rules = [
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'category' => ['required', 'string', 'max:100'],
-            'city' => ['required', 'string', 'max:100'],
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after:start_date'],
-            'price' => ['required', 'numeric', 'min:0'],
+          'title' => ['required', 'string', 'max:255'],
+          'description' => ['required', 'string'],
+          'category' => ['required', 'string', 'max:100'],
+          'city' => ['required', 'string', 'max:100'],
+          'start_date' => ['required', 'date'],
+          'end_date' => ['required', 'date', 'after:start_date'],
+          'price' => ['required', 'numeric', 'min:0'],
         ];
 
         if (! $isUpdate) {

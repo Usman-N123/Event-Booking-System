@@ -7,18 +7,21 @@ use App\Enums\BookingStatus;
 use App\Repositories\Contracts\BookingRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use App\Models\Event;
+use App\DTOs\Booking\ManageBookingDTO;
 
 class BookingRepository implements BookingRepositoryInterface
 {
-    public function manage(\App\DTOs\Booking\ManageBookingDTO $dto): Booking
+    public function manage(ManageBookingDTO $dto): Booking
     {
-        return \Illuminate\Support\Facades\DB::transaction(function () use ($dto) {
+        return DB::transaction(function () use ($dto) {
             if ($dto->id) {
                 $booking = Booking::find($dto->id);
                 if (!$booking) {
                     throw new \Exception("Booking not found.", 404);
                 }
-                $event = \App\Models\Event::find($booking->event_id);
+                $event = Event::find($booking->event_id);
                 
                 if ($dto->quantity !== $booking->quantity) {
                     $diff = $dto->quantity - $booking->quantity;
@@ -134,4 +137,4 @@ class BookingRepository implements BookingRepositoryInterface
       'total_revenue' => (float) ($stats->total_revenue ?? 0),
     ];
   }
-}
+}
