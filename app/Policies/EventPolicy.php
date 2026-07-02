@@ -38,7 +38,7 @@ class EventPolicy
      */
     public function update(User $user, Event $event): bool
     {
-        return false;
+        return $user->id === $event->organizer_id;
     }
 
     /**

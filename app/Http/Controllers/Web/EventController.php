@@ -62,11 +62,7 @@ class EventController extends Controller
 
   public function edit(Event $event): View|RedirectResponse
   {
-    if ($event->organizer_id !== auth()->id()) {
-      abort(403, 'You do not own this event.');
-    }
-
-    return view('events.edit', compact('event'));
+   return view('events.edit', compact('event'));
   }
 
   /**

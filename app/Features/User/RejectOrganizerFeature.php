@@ -2,6 +2,8 @@
 
 namespace App\Features\User;
 
+use App\DTOs\Admin\AdminOrganizerFilterDTO;
+use App\DTOs\Admin\AdminUserFilterDTO;
 use App\Features\Dashboard\GetGlobalStatisticsFeature;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Support\Facades\Cache;
@@ -30,6 +32,8 @@ class RejectOrganizerFeature
         }
 
         Cache::forget(GetGlobalStatisticsFeature::CACHE_KEY);
+        AdminOrganizerFilterDTO::bustListingsCache();
+        AdminUserFilterDTO::bustListingsCache();
 
         return true;
     }

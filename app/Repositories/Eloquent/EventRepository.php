@@ -7,7 +7,7 @@ use App\Enums\EventApprovalStatus;
 use App\Repositories\Contracts\EventRepositoryInterface;
 use App\DTOs\Event\EventFilterDTO;
 use App\DTOs\Event\ManageEventDTO;
-use App\Http\Controllers\Web\Auth;
+use App\DTOs\Admin\AdminEventFilterDTO;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -104,6 +104,7 @@ class EventRepository implements EventRepositoryInterface
         $event->save();
 
         EventFilterDTO::bustListingsCache();
+        AdminEventFilterDTO::bustListingsCache();
         Cache::forget(\App\Features\Dashboard\GetGlobalStatisticsFeature::CACHE_KEY);
 
         return $event;
@@ -292,5 +293,31 @@ class EventRepository implements EventRepositoryInterface
           ->first();
 
         return (bool) $event?->delete();
+    }
+
+    public function getAdminFilteredEvents(AdminEventFilterDTO $dto): LengthAwarePaginator
+    {
+        $query = Event::with('organizer')->latest();
+
+        if ($dto->search) {
+            $query->where(function ($q) use ($dto) {
+                $q->where('title', 'like', '%' . $dto->search . '%')
+                  ->orWhere('description', 'like', '%' . $dto->search . '%');
+            });
+        }
+
+        if ($dto->status) {
+            $query->where('approval_status', $dto->status);
+        }
+
+        if ($dto->dateFrom) {
+            $query->whereDate('start_date', '>=', $dto->dateFrom);
+        }
+
+        if ($dto->dateTo) {
+            $query->whereDate('start_date', '<=', $dto->dateTo);
+        }
+
+        return $query->paginate($dto->perPage, ['*'], 'events_page')->withQueryString();
     }
 }

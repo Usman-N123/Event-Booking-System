@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Contracts;
 
+use App\DTOs\Admin\AdminUserFilterDTO;
+use App\DTOs\Admin\AdminOrganizerFilterDTO;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -48,4 +50,8 @@ interface UserRepositoryInterface
    * Soft-delete a user account.
    */
   public function softDelete(int $id): bool;
+
+  public function getFilteredUsersPaginated(AdminUserFilterDTO $dto): LengthAwarePaginator;
+
+  public function getFilteredOrganizersPaginated(AdminOrganizerFilterDTO $dto): LengthAwarePaginator;
 }

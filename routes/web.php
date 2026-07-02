@@ -23,7 +23,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::middleware(['organizer.approved'])->group(function () {
             Route::post('/events', [EventController::class, 'store'])->name('events.store');
-            Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
+            Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit')->middleware('can:update,event');
             Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
         });
 

@@ -5,6 +5,8 @@ namespace App\Repositories\Eloquent;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\DTOs\Admin\AdminUserFilterDTO;
+use App\DTOs\Admin\AdminOrganizerFilterDTO;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use App\DTOs\User\ManageUserDTO;
@@ -121,5 +123,55 @@ class UserRepository implements UserRepositoryInterface
     {
         $user = $this->findById($id);
         return (bool) $user?->delete();
+    }
+
+    public function getFilteredUsersPaginated(AdminUserFilterDTO $dto): LengthAwarePaginator
+    {
+        $query = User::latest();
+
+        if ($dto->search) {
+            $query->where(function ($q) use ($dto) {
+                $q->where('name', 'like', '%' . $dto->search . '%')
+                  ->orWhere('email', 'like', '%' . $dto->search . '%');
+            });
+        }
+
+        if ($dto->role) {
+            $query->where('role', $dto->role);
+        }
+
+        if ($dto->dateFrom) {
+            $query->whereDate('created_at', '>=', $dto->dateFrom);
+        }
+
+        if ($dto->dateTo) {
+            $query->whereDate('created_at', '<=', $dto->dateTo);
+        }
+
+        return $query->paginate($dto->perPage, ['*'], 'users_page')->withQueryString();
+    }
+
+    public function getFilteredOrganizersPaginated(AdminOrganizerFilterDTO $dto): LengthAwarePaginator
+    {
+        $query = User::where('role', UserRole::Organizer->value)
+                     ->where('is_approved', false)
+                     ->latest();
+
+        if ($dto->search) {
+            $query->where(function ($q) use ($dto) {
+                $q->where('name', 'like', '%' . $dto->search . '%')
+                  ->orWhere('email', 'like', '%' . $dto->search . '%');
+            });
+        }
+
+        if ($dto->dateFrom) {
+            $query->whereDate('created_at', '>=', $dto->dateFrom);
+        }
+
+        if ($dto->dateTo) {
+            $query->whereDate('created_at', '<=', $dto->dateTo);
+        }
+
+        return $query->paginate($dto->perPage, ['*'], 'organizers_page')->withQueryString();
     }
 }

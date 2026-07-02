@@ -5,6 +5,7 @@ namespace App\Repositories\Contracts;
 use App\Models\Event;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\DTOs\Event\EventFilterDTO;
+use App\DTOs\Admin\AdminEventFilterDTO;
 
 interface EventRepositoryInterface
 {
@@ -125,4 +126,6 @@ interface EventRepositoryInterface
    * @return bool
    */
   public function softDeleteByOrganizer(int $eventId, int $organizerId): bool;
+
+  public function getAdminFilteredEvents(AdminEventFilterDTO $dto): LengthAwarePaginator;
 }

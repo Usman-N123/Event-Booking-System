@@ -2,6 +2,7 @@
 
 namespace App\Features\Event;
 
+use App\DTOs\Admin\AdminEventFilterDTO;
 use App\DTOs\Event\EventFilterDTO;
 use App\Repositories\Contracts\EventRepositoryInterface;
 use Illuminate\Support\Facades\Cache;
@@ -29,6 +30,7 @@ class CancelEventFeature
     }
 
     EventFilterDTO::bustListingsCache();
+    AdminEventFilterDTO::bustListingsCache();
     Cache::forget('admin.dashboard.global_statistics');
 
     return true;
